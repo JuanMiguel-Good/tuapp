@@ -1,0 +1,777 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Calculadora de Apps SST</title>
+<meta name="description" content="Calcula cuánto costaría tu app de SST según las funcionalidades que necesitas. Estimado al instante, por Good Solutions.">
+<meta property="og:title" content="¿Cuánto costaría tu app de SST? | Good Solutions">
+<meta property="og:description" content="Elige las funcionalidades y obtén un precio estimado al instante.">
+<meta property="og:type" content="website">
+<meta name="theme-color" content="#0B0E12">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&family=Caveat:wght@600&display=swap">
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0B0E12; --bg-2:#0F1318; --panel:#141920; --panel-2:#1A2029; --line:#232A34; --line-2:#303946;
+  --ink:#EEF1F5; --muted:#A6AFBC; --dim:#737E8C;
+  --accent:#FFE500; --accent-soft:rgba(255,229,0,.06); --accent-line:rgba(255,229,0,.45);
+  --ok:#35D07F; --focus:#7DB4FF;
+  --light:#E8ECF1; --light-ink:#141920; --light-muted:#4B5563;
+  --sans:"Plus Jakarta Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,Menlo,Consolas,monospace;
+  --hand:"Caveat","Comic Sans MS",cursive;
+}
+*{box-sizing:border-box}
+html,body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:17px;line-height:1.55}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+button{font:inherit}
+a{color:inherit}
+button:focus-visible,input:focus-visible,textarea:focus-visible,a:focus-visible,.item:focus-within,.mod:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.logo-x{display:inline-flex;align-items:center;gap:10px;font:700 14px var(--mono);letter-spacing:.06em;text-decoration:none;white-space:nowrap}
+.logo .br{color:var(--accent);font-size:22px;letter-spacing:-.04em}
+.logo em{font-style:normal;color:var(--accent)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;background:var(--accent);color:#0B0E12;font-weight:700;border:0;border-radius:10px;text-decoration:none;cursor:pointer;transition:filter .15s,transform .15s}
+.btn:hover{filter:brightness(1.06);transform:translateY(-1px)}
+.btn svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+/* LOGO: PNG original, sin fondo ni marco, sobre barras blancas */
+.gs{display:inline-block;line-height:0}
+.gs img{height:52px;width:auto;display:block}
+.q-by{margin-top:14px;font:700 13px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.f-brand{display:grid;gap:12px;justify-items:start}
+.f-links{list-style:none;margin:0;padding:0;display:grid;gap:10px;font-size:16px}
+.f-links li{display:flex;align-items:center;gap:10px}
+.f-links svg{width:20px;height:20px;fill:none;stroke:#1F2733;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.f-links a{color:#1F2733;text-decoration:none;user-select:all}
+.f-links a:hover{text-decoration:underline}
+/* NAV */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;background:#FFFFFF;border-bottom:1px solid #DDE2E8}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:68px}
+.nav nav{display:flex;gap:28px;font-size:15px;font-weight:600;color:#3B4553}
+.nav nav a{text-decoration:none}
+.nav nav a:hover{color:#0B0E12}
+.nav .btn{padding:11px 18px;font-size:15px}
+.show-s{display:none}
+
+/* HERO */
+.hero{position:relative;overflow:hidden;background:
+  radial-gradient(ellipse 60% 60% at 80% 20%,rgba(255,229,0,.06),transparent 70%),
+  linear-gradient(var(--line) 1px,transparent 1px) 0 0/48px 48px,
+  linear-gradient(90deg,var(--line) 1px,transparent 1px) 0 0/48px 48px,var(--bg);border-bottom:1px solid var(--line)}
+.hero::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,transparent 60%,var(--bg));pointer-events:none}
+.hero .wrap{position:relative;z-index:1;display:grid;grid-template-columns:minmax(0,.95fr) minmax(0,1.1fr);gap:40px;align-items:center;padding-block:64px 72px}
+.hero h1{font-weight:800;font-size:clamp(38px,5.6vw,64px);line-height:1.02;letter-spacing:-.025em;margin:0 0 20px;text-wrap:balance}
+.hero h1 span{color:var(--accent)}
+.hero .lede{font-size:19px;color:var(--muted);margin:0 0 32px;max-width:34ch}
+.perks{display:grid;grid-template-columns:repeat(3,auto);justify-content:start;gap:28px;margin-bottom:34px}
+.perk{display:grid;gap:10px;font-size:16px;line-height:1.3;font-weight:500}
+.perk i{width:48px;height:48px;border-radius:50%;border:1px solid var(--line-2);display:grid;place-items:center;color:var(--accent);background:var(--panel)}
+.perk svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.hero .btn.big{padding:18px 30px;font-size:18px;border-radius:12px}
+.privacy{display:flex;align-items:center;gap:8px;margin-top:18px;font-size:14.5px;color:var(--muted)}
+.privacy svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2}
+
+/* hero art */
+.art{position:relative;padding:0 0 0 12%}
+.note{position:absolute;top:-10px;left:8%;font:600 26px var(--hand);color:var(--accent);transform:rotate(-8deg);line-height:1.05;z-index:3}
+.note svg{display:block;width:60px;height:30px;margin:4px 0 0 90px;fill:none;stroke:var(--accent);stroke-width:2;stroke-linecap:round}
+.live{position:absolute;top:-14px;right:0;z-index:3;display:flex;align-items:center;gap:10px;background:var(--panel);border:1px solid var(--line-2);border-radius:12px;padding:10px 14px;font:700 12px var(--mono);letter-spacing:.06em;line-height:1.3}
+.live::before{content:"";width:11px;height:11px;border-radius:50%;background:var(--ok);box-shadow:0 0 12px var(--ok);flex:none}
+.laptop{position:relative;margin-top:56px;container-type:inline-size}
+.laptop .scr{background:#07090C;border:3px solid #2A313B;border-radius:14px 14px 4px 4px;padding:2.4cqw;aspect-ratio:16/10.2}
+.laptop .base{height:1.8cqw;background:linear-gradient(#3A424D,#20262E);border-radius:0 0 12px 12px;margin:0 -4%}
+.laptop .base::after{content:"";display:block;width:14%;height:.6cqw;margin:0 auto;background:#12161B;border-radius:0 0 6px 6px}
+.m-top{display:flex;justify-content:space-between;align-items:center;font:700 1.5cqw var(--mono);margin-bottom:2cqw;letter-spacing:.05em}
+.m-top em{font-style:normal;color:var(--accent)}
+.m-top .d{display:flex;gap:.8cqw}.m-top .d i{width:1.2cqw;height:1.2cqw;border-radius:50%;background:#C9D0D8}.m-top .d i+i{background:#3B8BFF}
+.m-grid{display:grid;grid-template-columns:17% 1fr 38%;gap:1.6cqw;height:calc(100% - 4.6cqw)}
+.m-side{display:grid;gap:1cqw;align-content:start;font-size:1.3cqw;color:var(--muted)}
+.m-side span{padding:1cqw}
+.m-side span.a{background:var(--accent);color:#0B0E12;border-radius:.8cqw;font-weight:700}
+.m-mid{background:var(--panel);border:1px solid var(--line);border-radius:1.2cqw;overflow:hidden}
+.m-h{padding:1.4cqw 1.6cqw;font-weight:700;font-size:1.5cqw;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.m-h b{color:var(--accent);font-family:var(--mono)}
+.m-it{display:grid;grid-template-columns:3.4cqw 1fr auto;gap:1.2cqw;padding:1.6cqw;border-bottom:1px solid var(--line);align-items:start}
+.m-ic{width:3.4cqw;height:3.4cqw;border-radius:.8cqw;border:1px solid var(--line-2);display:grid;place-items:center;color:var(--accent)}
+.m-ic svg{width:60%;height:60%;fill:none;stroke:currentColor;stroke-width:2}
+.m-it strong{display:block;font-size:1.35cqw;line-height:1.2}
+.m-it small{display:block;font-size:1.05cqw;color:var(--dim);line-height:1.3;margin-top:.4cqw}
+.m-it .tk{display:inline-block;margin-top:.9cqw;font:700 1.05cqw var(--mono);color:var(--accent);border:1px solid var(--accent-line);border-radius:.5cqw;padding:.3cqw .8cqw}
+.m-sw{width:3.8cqw;height:2.2cqw;border-radius:2cqw;background:var(--accent);position:relative}
+.m-sw::after{content:"";position:absolute;right:.3cqw;top:.3cqw;width:1.6cqw;height:1.6cqw;border-radius:50%;background:#0B0E12}
+.m-tk{background:linear-gradient(180deg,#161B22,#10141A);border:1px solid var(--accent-line);border-radius:1.2cqw;padding:1.8cqw;display:grid;gap:1.6cqw;align-content:start}
+.m-lbl{font:500 1cqw var(--mono);letter-spacing:.08em;color:var(--muted);text-transform:uppercase}
+.m-price{font:700 3.6cqw var(--mono);color:var(--accent);line-height:1;margin-top:.6cqw}
+.m-rng{font-size:1.1cqw;color:var(--muted);margin-top:.6cqw}
+.m-cells{display:grid;grid-template-columns:1fr 1fr;gap:1cqw}
+.m-cells div{border:1px solid var(--line);border-radius:.8cqw;padding:1cqw;background:var(--bg)}
+.m-cells b{display:block;font:700 1.6cqw var(--mono);margin-top:.4cqw}
+.m-segs{display:grid;grid-template-columns:repeat(18,1fr);gap:.3cqw}
+.m-segs i{height:1.2cqw;background:var(--line-2);border-radius:.2cqw}
+.m-segs i:nth-child(-n+6){background:var(--accent)}
+.m-cta{background:var(--accent);color:#0B0E12;border-radius:1cqw;padding:1.4cqw;font-weight:700;font-size:1.3cqw;text-align:center}
+.phone{position:absolute;left:-2%;bottom:-8%;width:31%;z-index:2;container-type:inline-size}
+.ph{background:#07090C;border:3px solid #2E3540;border-radius:13cqw;padding:5cqw 4cqw 8cqw;box-shadow:0 30px 60px -20px rgba(0,0,0,.8)}
+.phone .notch{width:34%;height:4cqw;margin:0 auto 4cqw;background:#1E242C;border-radius:4cqw}
+.phone .m-top{font-size:4.4cqw;margin-bottom:5cqw}
+.phone .m-top .d{display:none}
+.phone .m-h{font-size:5cqw;padding:4cqw}
+.phone .m-mid{border-radius:4cqw}
+.phone .m-it{grid-template-columns:10cqw 1fr auto;gap:3.5cqw;padding:4cqw}
+.phone .m-ic{width:10cqw;height:10cqw;border-radius:2.6cqw;background:var(--accent);color:#0B0E12;border:0}
+.phone .m-it strong{font-size:4.4cqw}
+.phone .m-it .tk{font-size:3.6cqw;margin-top:2.4cqw;border-radius:1.4cqw;padding:.8cqw 2.2cqw}
+.phone .m-sw{width:11cqw;height:6.4cqw;border-radius:6cqw}
+.phone .m-sw::after{width:4.8cqw;height:4.8cqw;right:.8cqw;top:.8cqw}
+
+/* SECTIONS */
+section.band{padding-block:72px}
+.sec-h{display:flex;justify-content:space-between;align-items:end;gap:20px;flex-wrap:wrap;margin-bottom:36px}
+.sec-h h2{font-weight:800;font-size:clamp(28px,3.6vw,38px);line-height:1.1;letter-spacing:-.02em;margin:0 0 6px}
+.sec-h p{margin:0;color:var(--muted);font-size:18px}
+.link{color:var(--accent);font-weight:700;display:inline-flex;align-items:center;gap:8px;text-underline-offset:4px}
+.link svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.step{display:grid;grid-template-columns:72px 1fr;gap:20px;position:relative}
+.step .c{width:72px;height:72px;border-radius:50%;border:1px solid var(--line-2);background:var(--panel);display:grid;place-items:center;color:var(--ink)}
+.step .c svg{width:32px;height:32px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.step .n{font:700 26px var(--mono);color:var(--accent);line-height:1}
+.step h3{font-size:21px;font-weight:700;margin:8px 0 8px;line-height:1.25}
+.step p{margin:0;color:var(--muted);font-size:16.5px}
+.step:not(:last-child)::after{content:"›";position:absolute;right:-6px;top:22px;font-size:30px;color:var(--dim)}
+#como{background:var(--bg-2);border-bottom:1px solid var(--line)}
+
+.mods{display:grid;grid-template-columns:repeat(6,1fr);gap:14px}
+.mod{min-height:100%;text-align:left;background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:20px 18px;color:var(--ink);cursor:pointer;display:grid;gap:10px;align-content:start;transition:border-color .15s,transform .15s}
+.mod:hover{border-color:var(--accent-line);transform:translateY(-2px)}
+.mod i{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;color:#0B0E12;margin-bottom:6px}
+.mod i svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.mod b{font-size:17px}
+.mod span{font-size:15px;color:var(--muted);line-height:1.4}
+.mod .mp{font-style:normal;font:700 14px var(--mono);color:var(--accent);margin-top:auto;padding-top:6px}
+
+/* ESTIMATOR */
+#estimador{background:var(--bg-2);border-block:1px solid var(--line)}
+.presets{display:grid;gap:10px;margin-bottom:28px}
+.presets .lbl{font:500 13px var(--mono);color:var(--dim);letter-spacing:.06em;text-transform:uppercase}
+.chips{display:flex;flex-wrap:wrap;gap:10px}
+.chip{border:1px solid var(--line-2);background:var(--panel);color:var(--ink);padding:12px 18px;border-radius:10px;cursor:pointer;font-weight:600;font-size:16px;min-height:48px}
+.chip:hover{border-color:var(--accent-line)}
+.chip[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:#0B0E12}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:28px;align-items:start}
+.groups{display:grid;gap:20px}
+.group{background:var(--panel);border:1px solid var(--line);border-radius:14px;overflow:hidden;scroll-margin-top:90px}
+.group-h{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--line);background:var(--panel-2)}
+.group-h h3{margin:0;font-weight:700;font-size:19px}
+.group-h h3::before{content:"MÓDULO // ";letter-spacing:.06em;color:var(--accent);font-family:var(--mono);font-size:15px}
+.group-h .count{font:500 14px var(--mono);color:var(--muted);white-space:nowrap}
+.group-h .count.has{color:var(--accent)}
+.item{display:grid;grid-template-columns:46px minmax(0,1fr) auto;gap:6px 16px;align-items:center;padding:16px 20px;border-bottom:1px solid var(--line);cursor:pointer;position:relative;transition:background .15s}
+.item:last-child{border-bottom:0}
+.item:hover{background:rgba(255,255,255,.025)}
+.item.on{background:var(--accent-soft)}
+.item.on::before{content:"";position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.item.fixed{cursor:default}
+.ico{width:46px;height:46px;border-radius:12px;background:var(--panel-2);border:1px solid var(--line-2);display:grid;place-items:center;color:var(--muted);align-self:start;transition:background .15s,color .15s}
+.ico svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ico svg .f{fill:currentColor;stroke:none}
+.item.on .ico{background:var(--accent);border-color:var(--accent);color:#0B0E12}
+.item .name{font-weight:700;font-size:17px;line-height:1.3}
+.item .desc{color:var(--muted);font-size:15.5px;margin-top:3px}
+.item .tk{display:inline-block;margin-top:8px;font:700 14px var(--mono);color:var(--dim);background:var(--bg);border:1px solid var(--line);padding:3px 9px;border-radius:6px;font-variant-numeric:tabular-nums}
+.item.on .tk{color:var(--accent);border-color:var(--accent-line)}
+.item input{position:absolute;opacity:0;width:1px;height:1px;pointer-events:none}
+.switch{width:52px;height:30px;border-radius:999px;background:var(--line-2);position:relative;transition:background .15s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#C9D0D8;transition:transform .15s,background .15s}
+.item.on .switch{background:var(--accent)}
+.item.on .switch::after{transform:translateX(22px);background:#0B0E12}
+.item.fixed .switch{opacity:.6}
+.base-note{font:500 13px var(--mono);color:var(--dim);margin-top:6px}
+.stepper{display:inline-flex;align-items:center;border:1px solid var(--line-2);border-radius:10px;overflow:hidden;margin-top:10px;background:var(--bg)}
+.stepper button{width:48px;height:44px;border:0;background:transparent;color:var(--ink);font:700 22px var(--mono);cursor:pointer}
+.stepper button:hover{background:var(--accent);color:#0B0E12}
+.stepper output{min-width:44px;text-align:center;font:700 18px var(--mono)}
+.idea{padding:18px 20px 20px;display:grid;gap:10px}
+.idea label{font-weight:600;font-size:16px;color:var(--muted)}
+.idea textarea{width:100%;min-height:110px;font:inherit;font-size:17px;color:var(--ink);background:var(--bg);border:1px solid var(--line-2);border-radius:10px;padding:14px;resize:vertical}
+.idea textarea::placeholder{color:var(--dim)}
+.ticket{position:sticky;top:calc(env(safe-area-inset-top,0px) + 88px);background:linear-gradient(180deg,#161B22,#10141A);border:1px solid var(--accent-line);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px -20px rgba(255,229,0,.18);scroll-margin-top:90px}
+.ticket-h{display:flex;justify-content:space-between;align-items:center;padding:14px 20px;border-bottom:1px solid var(--line);font:500 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ticket-h .dots{display:flex;gap:6px}
+.ticket-h .dots i{width:9px;height:9px;border-radius:50%;background:var(--line-2)}
+.ticket-h .dots i:first-child{background:var(--accent)}
+.ticket-body{padding:22px 20px 24px;display:grid;gap:20px}
+.t-label{font:500 13px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.price{font:700 50px var(--mono);line-height:1;color:var(--accent);font-variant-numeric:tabular-nums;margin-top:8px;letter-spacing:-.03em}
+.sub{font:500 15px var(--mono);color:var(--muted);margin-top:10px;font-variant-numeric:tabular-nums}
+.readout{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.cell{background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:12px 14px}
+.cell b{display:block;font:700 22px var(--mono);margin-top:4px;font-variant-numeric:tabular-nums}
+.meter{display:grid;gap:8px}
+.segs{display:grid;grid-template-columns:repeat(24,1fr);gap:3px}
+.segs i{height:14px;border-radius:2px;background:var(--line-2)}
+.segs i.f{background:var(--accent);box-shadow:0 0 6px rgba(255,229,0,.35)}
+.bands{display:grid;grid-template-columns:5fr 7fr 12fr;font:500 13px var(--mono);color:var(--dim)}
+.bands span{border-left:1px solid var(--line-2);padding-left:6px}
+.bands span.cur{color:var(--accent);border-left-color:var(--accent)}
+.lines{list-style:none;margin:0;padding:16px 0 0;display:grid;gap:8px;max-height:260px;overflow:auto;font-size:15.5px;border-top:1px solid var(--line)}
+.lines li{display:flex;justify-content:space-between;gap:12px}
+.lines li span:last-child{font-family:var(--mono);color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.lines li.adj{border-top:1px dashed var(--line-2);padding-top:8px;color:var(--muted)}
+.cta{width:100%;padding:16px;font-size:17px;border-radius:12px;min-height:58px}
+.cta svg{width:22px;height:22px}
+.ghost{background:transparent;border:1px solid var(--line-2);color:var(--ink);border-radius:12px;padding:13px;font-weight:600;font-size:16px;cursor:pointer;margin-top:-8px}
+.ghost:hover{border-color:var(--accent-line)}
+.wa-num{font-size:15px;color:var(--muted);margin:-10px 0 0;text-align:center}
+.wa-num b{color:var(--ink);user-select:all}
+.copied{font-size:15px;color:var(--ok);min-height:1.3em;margin:-10px 0 0;text-align:center}
+.rate{font-size:14.5px;color:var(--muted);margin:0;line-height:1.5}
+
+/* LIGHT */
+.light{background:var(--light);color:var(--light-ink)}
+.light .wrap{display:grid;grid-template-columns:1fr 1px 1fr;gap:48px}
+.light .sep{background:#C9D1DB}
+.light h2{display:flex;align-items:center;gap:12px;font-size:24px;font-weight:800;margin:0 0 18px}
+.light h2 svg{width:30px;height:30px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:12px;font-size:17px;color:var(--light-muted)}
+.checks li{display:grid;grid-template-columns:24px 1fr;gap:10px;align-items:start}
+.checks svg{width:22px;height:22px;margin-top:2px;fill:none;stroke:#16A34A;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+
+/* FAQ */
+.faq{display:grid;gap:12px;max-width:860px}
+.faq details{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:0 20px}
+.faq summary{cursor:pointer;list-style:none;padding:18px 0;font-weight:700;font-size:18px;display:flex;justify-content:space-between;gap:16px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--accent);font:700 22px var(--mono);line-height:1}
+.faq details[open] summary::after{content:"−"}
+.faq p{margin:0 0 18px;color:var(--muted);font-size:16.5px;max-width:70ch}
+
+/* CTA BANNER */
+.banner{background:linear-gradient(120deg,#131820,#0E1217);border:1px solid var(--line-2);border-radius:20px;padding:44px 40px;display:grid;grid-template-columns:1.2fr auto auto 1fr;gap:32px;align-items:center}
+.banner h2{font-weight:800;font-size:clamp(28px,3.4vw,38px);line-height:1.12;letter-spacing:-.02em;margin:0 0 10px}
+.banner h2 span{color:var(--accent)}
+.banner p{margin:0 0 24px;color:var(--muted);font-size:18px}
+.banner .btn{padding:16px 26px;font-size:17px}
+.banner .hand{font:600 26px var(--hand);color:var(--accent);transform:rotate(-10deg);line-height:1.1;text-align:center}
+.bulb{width:84px;height:84px;border-radius:18px;background:var(--panel-2);border:1px solid var(--line-2);display:grid;place-items:center;color:var(--accent)}
+.bulb svg{width:42px;height:42px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.quote{border:1px solid var(--line-2);border-radius:16px;padding:24px;font-size:18px;line-height:1.45}
+.quote .logo{margin-top:14px;font-size:12px}
+
+footer{background:#FFFFFF;color:#1F2733}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap;padding-block:32px;color:#4B5563;font-size:15px}
+footer .tl{display:flex;align-items:center;gap:12px}
+footer .tl::after{content:"";width:24px;height:2px;background:#1F2733}
+
+/* Mobile bar */
+.mbar{display:none}
+@media (max-width:1000px){
+  .nav nav{display:none}
+  .hero .wrap{grid-template-columns:1fr;padding-block:40px 64px;gap:28px}
+  .art{padding:0 0 12% 10%;max-width:640px}
+  .steps{grid-template-columns:1fr;gap:28px}
+  .step::after{display:none}
+  .mods{grid-template-columns:repeat(3,1fr)}
+  .grid{grid-template-columns:1fr}
+  .ticket{position:static}
+  .banner{grid-template-columns:1fr;text-align:left;padding:32px 24px}
+  .banner .hand,.banner .bulb{display:none}
+  .light .wrap{grid-template-columns:1fr;gap:36px}
+  .light .sep{display:none}
+  .mbar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:20;background:rgba(11,14,18,.95);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);padding:14px 16px calc(14px + env(safe-area-inset-bottom,0px));justify-content:space-between;align-items:center;gap:12px;border-top:1px solid var(--accent-line);transform:translateY(110%);transition:transform .25s}
+  .mbar.show{transform:none}
+  .mbar b{display:block;font:700 26px var(--mono);line-height:1.1;color:var(--accent);font-variant-numeric:tabular-nums}
+  .mbar small{display:block;font:500 14px var(--mono);color:var(--muted)}
+  .mbar a{padding:14px 18px;font-size:16px}
+  body{padding-bottom:96px}
+}
+@media (max-width:600px){
+  .wrap{padding-inline:16px}
+  .nav .btn{padding:10px 14px;font-size:15px}
+  .gs img{height:42px}
+  .hide-s{display:none}
+  .show-s{display:inline}
+  .logo{font-size:12px}
+  .perks{grid-template-columns:repeat(3,1fr);gap:14px}
+  .perk{font-size:15px}
+  .hero .btn.big{width:100%}
+  .note{font-size:21px;top:-18px;left:4%}
+  .note svg{margin-left:70px;width:44px}
+  .live{font-size:10.5px;padding:8px 10px}
+  .laptop{margin-top:52px}
+  .mods{grid-template-columns:repeat(2,1fr)}
+  section.band{padding-block:56px}
+  .item{padding:16px;gap:6px 12px;grid-template-columns:40px minmax(0,1fr) auto}
+  .ico{width:40px;height:40px;border-radius:10px}
+  .ico svg{width:21px;height:21px}
+  .group-h{padding:14px 16px}
+  .idea{padding:16px}
+  .chip{flex:1 1 calc(50% - 10px);text-align:center}
+  .price{font-size:44px}
+}
+</style>
+</head>
+<body>
+<!-- NAV -->
+<header class="nav">
+  <div class="wrap">
+    <a class="gs" href="#top"><img class="gs-img" src="gs-logo.png" alt="Good Solutions" width="1427" height="484"></a>
+    <nav aria-label="Secciones">
+      <a href="#como">Cómo funciona</a>
+      <a href="#incluye">Qué incluye</a>
+      <a href="#modulos">Apps</a>
+      <a href="#faq">FAQ</a>
+    </nav>
+    <a class="btn" href="#estimador"><span class="hide-s">Probar estimador</span><span class="show-s">Estimar</span> <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</header>
+
+<!-- HERO -->
+<section class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <h1>¿Cuánto costaría <span>tu app de SST?</span></h1>
+      <p class="lede">Obtén un precio estimado al instante, según las funcionalidades que necesitas. Sin reuniones y en menos de 2 minutos.</p>
+      <div class="perks">
+        <div class="perk"><i><svg viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg></i>Rápido<br>y simple</div>
+        <div class="perk"><i><svg viewBox="0 0 24 24"><path d="M12 2l9 5v10l-9 5-9-5V7z"/><path d="M3 7l9 5 9-5M12 12v10"/></svg></i>Precio<br>referencial real</div>
+        <div class="perk"><i><svg viewBox="0 0 24 24"><path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6M9 13h6M9 17h6"/></svg></i>Ideal para<br>tomar decisiones</div>
+      </div>
+      <a class="btn big" href="#estimador">¿Listo? Estima tu app ahora <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      <div class="privacy"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>Tus respuestas no se guardan ni se envían.</div>
+    </div>
+
+    <div class="art" aria-hidden="true">
+      <div class="note">De tu idea<br>a una app real<svg viewBox="0 0 60 30"><path d="M2 4c14 2 30 8 44 22M46 26l-1-10M46 26l-10-2"/></svg></div>
+      <div class="live">ESTIMADOR<br>EN VIVO</div>
+      <div class="laptop">
+        <div class="scr">
+          <div class="m-top"><span>ESTIMADOR <em>APP SST</em></span><span class="d"><i></i><i></i></span></div>
+          <div class="m-grid">
+            <div class="m-side"><span class="a">Inspecciones</span><span>Incidentes</span><span>Capacitaciones</span><span>Desde cero</span></div>
+            <div class="m-mid">
+              <div class="m-h"><b>//</b> Base</div>
+              <div class="m-it"><span class="m-ic"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/></svg></span><div><strong>App web</strong><small>Se usa desde el navegador del celular o la PC.</small><span class="tk">+2.0 M</span></div><span class="m-sw"></span></div>
+              <div class="m-it"><span class="m-ic"><svg viewBox="0 0 24 24"><path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/></svg></span><div><strong>Con tu logo y colores</strong><small>La app se ve como tuya o de tu cliente.</small><span class="tk">+0.5 M</span></div><span class="m-sw"></span></div>
+            </div>
+            <div class="m-tk">
+              <div><div class="m-lbl">Precio estimado</div><div class="m-price">S/ 950</div><div class="m-rng">Rango S/ 830 a S/ 1,080</div></div>
+              <div class="m-cells"><div><span class="m-lbl">Tokens</span><b>15.0 M</b></div><div><span class="m-lbl">En dólares</span><b>US$ 254</b></div></div>
+              <div><div class="m-lbl" style="margin-bottom:.8cqw">Tamaño del desarrollo</div><div class="m-segs"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div></div>
+              <div class="m-cta">Enviar por WhatsApp</div>
+            </div>
+          </div>
+        </div>
+        <div class="base"></div>
+      </div>
+      <div class="phone"><div class="ph">
+        <div class="notch"></div>
+        <div class="m-top"><span>ESTIMADOR <em>APP SST</em></span></div>
+        <div class="m-mid">
+          <div class="m-h"><b>//</b> Base</div>
+          <div class="m-it"><span class="m-ic"><svg viewBox="0 0 24 24"><rect x="6" y="2" width="12" height="20" rx="2"/></svg></span><div><strong>App web</strong><span class="tk">+2.0 M</span></div><span class="m-sw"></span></div>
+          <div class="m-it"><span class="m-ic"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><div><strong>Inicio de sesión</strong><span class="tk">+2.0 M</span></div><span class="m-sw"></span></div>
+        </div>
+      </div></div>
+    </div>
+  </div>
+</section>
+
+<!-- COMO FUNCIONA -->
+<section class="band" id="como">
+  <div class="wrap">
+    <div class="sec-h"><div><h2>¿Cómo funciona?</h2><p>En 3 pasos tienes tu estimado</p></div></div>
+    <div class="steps">
+      <div class="step"><span class="c"><svg viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h4M12 12h8M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="10" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></svg></span><div><span class="n">01</span><h3>Elige las funcionalidades</h3><p>Activa solo lo que necesitas. Cada opción muestra cuánto suma al costo.</p></div></div>
+      <div class="step"><span class="c"><svg viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M8 6h8v4H8z"/><path d="M8.5 14h.01M12 14h.01M15.5 14h.01M8.5 17.5h.01M12 17.5h.01M15.5 17.5h.01"/></svg></span><div><span class="n">02</span><h3>Revisa tu estimado</h3><p>Ves el precio, los tokens y el tamaño del desarrollo en tiempo real.</p></div></div>
+      <div class="step"><span class="c"><svg viewBox="0 0 24 24"><path d="M4 20l1.5-4.2A8 8 0 1 1 8.4 18.6z"/><path d="M9 9.5c0 3 2.5 5.5 5.5 5.5l1-1.5-2-1-1 .8a4 4 0 0 1-2-2l.8-1-1-2z"/></svg></span><div><span class="n">03</span><h3>Envíalo por WhatsApp</h3><p>Con un toque me llega tu resumen. Reviso tu idea y te confirmo el precio.</p></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- MODULOS -->
+<section class="band" id="modulos">
+  <div class="wrap">
+    <div class="sec-h">
+      <div><h2>Apps que puedes crear</h2><p>Toca una y se carga en el estimador con sus módulos. Luego la ajustas a tu medida.</p></div>
+      <a class="link" href="#estimador">Ir al estimador <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+    <div class="mods">
+      <button class="mod" data-preset="inspecciones"><i style="background:#FFE500"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V2h6v2M9 13l2 2 4-4"/></svg></i><b>Inspecciones</b><span>Checklists con fotos, firma y reporte en PDF.</span><em class="mp" data-p="inspecciones"></em></button>
+      <button class="mod" data-preset="incidentes"><i style="background:#FF6B4A"><svg viewBox="0 0 24 24"><path d="M12 3L2 21h20z"/><path d="M12 10v5M12 18h.01"/></svg></i><b>Incidentes</b><span>Reporte con fotos y ubicación, alertas y dashboard.</span><em class="mp" data-p="incidentes"></em></button>
+      <button class="mod" data-preset="capacitaciones"><i style="background:#9B7BFF"><svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="14" rx="2"/><path d="M10 8.5v5l4.5-2.5zM8 21h8"/></svg></i><b>Capacitaciones</b><span>Cursos, exámenes y certificados con QR.</span><em class="mp" data-p="capacitaciones"></em></button>
+      <button class="mod" data-preset="emos"><i style="background:#34D6B8"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 4 10 2-5h6"/></svg></i><b>EMOs</b><span>Resultados, lectura con IA y recordatorios de vencimiento.</span><em class="mp" data-p="emos"></em></button>
+      <button class="mod" data-preset="iperc"><i style="background:#4D96FF"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg></i><b>Matriz IPERC</b><span>Cálculo de riesgo, sugerencias con IA y reportes.</span><em class="mp" data-p="iperc"></em></button>
+      <button class="mod" data-preset="cero"><i style="background:#3A4350;color:#EEF1F5"><svg viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg></i><b>Tu propia app</b><span>Desde cero, con las funcionalidades que elijas.</span><em class="mp">Arma tu precio</em></button>
+    </div>
+  </div>
+</section>
+
+<!-- ESTIMADOR -->
+<section class="band" id="estimador">
+  <div class="wrap">
+    <div class="sec-h"><div><h2>Arma tu app</h2><p>Elige una app de ejemplo o parte de cero, y activa las funcionalidades que necesitas en cada módulo. Cobro por millón de tokens, el trabajo de IA que consume construirla: si tu app es más simple, pagas menos.</p></div></div>
+    <div class="presets">
+      <span class="lbl">Empieza con una app</span>
+      <div class="chips" role="group" aria-label="Ejemplos">
+        <button class="chip" data-preset="inspecciones">Inspecciones</button>
+        <button class="chip" data-preset="incidentes">Incidentes</button>
+        <button class="chip" data-preset="capacitaciones">Capacitaciones</button>
+        <button class="chip" data-preset="emos">EMOs</button>
+        <button class="chip" data-preset="iperc">Matriz IPERC</button>
+        <button class="chip" data-preset="cero">Desde cero</button>
+      </div>
+    </div>
+    <div class="grid">
+      <div class="groups" id="groups"></div>
+      <aside class="ticket" id="resumen" aria-live="polite">
+        <div class="ticket-h"><span>Tu estimado</span><span class="dots" aria-hidden="true"><i></i><i></i><i></i></span></div>
+        <div class="ticket-body">
+          <div>
+            <div class="t-label">Precio estimado</div>
+            <div class="price" id="pen">S/ 0</div>
+            <div class="sub" id="range">Rango S/ 0 a S/ 0</div>
+          </div>
+          <div class="readout">
+            <div class="cell"><span class="t-label">Tokens</span><b id="tok">0 M</b></div>
+            <div class="cell"><span class="t-label">En dólares</span><b id="usd">US$ 0</b></div>
+          </div>
+          <div class="meter">
+            <span class="t-label">Tamaño del desarrollo</span>
+            <div class="segs" id="segs" aria-hidden="true"></div>
+            <div class="bands" id="bands"><span>Simple</span><span>Media</span><span>Plataforma</span></div>
+          </div>
+          <ul class="lines" id="lines"></ul>
+          <a class="btn cta" id="wa" href="https://wa.me/51962342328" target="_blank" rel="noopener"><svg viewBox="0 0 24 24"><path d="M4 20l1.5-4.2A8 8 0 1 1 8.4 18.6z"/></svg>Enviar por WhatsApp</a>
+          <button class="ghost" id="copy">Copiar resumen</button>
+          <p class="copied" id="copied"></p>
+          <p class="wa-num">O escríbeme al <b>+51 962 342 328</b></p>
+          <p class="rate" id="rate"></p>
+        </div>
+      </aside>
+    </div>
+  </div>
+</section>
+
+<!-- IDEAL / IMPORTANTE -->
+<section class="band light" id="incluye">
+  <div class="wrap">
+    <div>
+      <h2><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>Ideal para</h2>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Prevencionistas con una idea que no saben programar</li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Consultores SST que quieren una herramienta propia</li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Validar una idea antes de invertir más</li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Digitalizar formatos que hoy son papel o Excel</li>
+      </ul>
+    </div>
+    <div class="sep" aria-hidden="true"></div>
+    <div>
+      <h2><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v5M12 16h.01"/></svg>Importante</h2>
+      <ul class="checks">
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>El precio es referencial y se calcula en millones de tokens, en soles y dólares.</li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Incluye la app funcionando y un reporte del consumo real de tokens.</li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>Los reintentos por errores míos no se cobran.</li>
+        <li><svg viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></svg>No incluye hosting, dominio ni soporte mensual.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="band" id="faq">
+  <div class="wrap">
+    <div class="sec-h"><div><h2>Preguntas frecuentes</h2></div></div>
+    <div class="faq">
+      <details open><summary>¿Qué es un token?</summary><p>Es la unidad con la que se mide el trabajo de la IA. Mientras más funciones tiene tu app, más tokens consume construirla. Por eso una app simple cuesta menos que una plataforma completa.</p></details>
+      <details><summary>¿Por qué cobras por tokens y no por horas?</summary><p>Porque pagas por lo que se construye, no por el tiempo. Si la trabajo más rápido, a ti no te cuesta más ni menos.</p></details>
+      <details><summary>¿El precio final puede cambiar?</summary><p>El estimado es referencial. Al revisar tu idea te confirmo el precio final antes de empezar.</p></details>
+      <details><summary>¿Qué pasa si quiero cambios después?</summary><p>Los cambios después de la entrega se cobran con la misma tarifa por millón de tokens, según lo que consuman.</p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="banner">
+      <div>
+        <h2>Tu próxima app puede<br>ser <span>más simple</span> de lo que crees</h2>
+        <p>Estima, valida y da el siguiente paso.</p>
+        <a class="btn" href="#estimador">Probar estimador ahora <svg viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+      </div>
+      <div class="hand" aria-hidden="true">Menos ideas,<br>más soluciones</div>
+      <div class="bulb" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-3.5 10.9c.6.5 1 1.2 1 2.1h5c0-.9.4-1.6 1-2.1A6 6 0 0 0 12 3z"/></svg></div>
+      <div class="quote">"Las mejores herramientas nacen de problemas reales."<div class="q-by">Good Solutions</div></div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="f-brand">
+      <a class="gs" href="https://www.goodsolutions.pe/" target="_blank" rel="noopener"><img class="gs-img" src="gs-logo.png" alt="Good Solutions" width="1427" height="484"></a>
+      <span class="tl">De Prevención a Código</span>
+    </div>
+    <ul class="f-links">
+      <li><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.7 3.8 5.7 3.8 9s-1.3 6.3-3.8 9c-2.5-2.7-3.8-5.7-3.8-9S9.5 5.7 12 3z"/></svg><a href="https://www.goodsolutions.pe/" target="_blank" rel="noopener">www.goodsolutions.pe</a></li>
+      <li><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><a href="mailto:hola@goodsolutions.pe">hola@goodsolutions.pe</a></li>
+      <li><svg viewBox="0 0 24 24"><path d="M4 20l1.5-4.2A8 8 0 1 1 8.4 18.6z"/></svg><a href="https://wa.me/51962342328" target="_blank" rel="noopener">+51 962 342 328</a></li>
+    </ul>
+  </div>
+</footer>
+
+<div class="mbar" id="mbar">
+  <div><b id="mpen">S/ 0</b><small id="mtok">0 M tokens</small></div>
+  <a class="btn" href="#resumen">Ver resumen</a>
+</div>
+
+<script>
+// ====== Configuración: ajusta aquí tus números ======
+const TARIFA_USD = 17;      // $2.5 tokens + $14.5 tiempo, por millón
+const TIPO_CAMBIO = 3.75;   // soles por dólar
+const AJUSTE = 0.15;        // colchón de ajustes y pruebas
+const RANGO_MAX = 0.30;     // techo del rango sobre el consumo base
+const ESCALA_MAX = 60;      // millones de tokens que llenan la barra
+const BANDAS = [12, 28];    // límites Simple / Media / Plataforma (M)
+const GRUPOS = [
+  {t:"Tipo de app", items:[
+    {id:"base", n:"App web", d:"Se usa desde el navegador del celular o la PC, sin instalar nada.", m:2, fixed:true},
+    {id:"pwa", n:"Instalable en el celular (PWA)", d:"Queda un ícono en la pantalla de inicio y se abre como app. Toma más trabajo que una app web.", m:3},
+    {id:"offline", n:"Funciona sin internet", d:"Registra en zonas sin señal y sincroniza después. Necesita la versión instalable (PWA), se activa sola.", m:9},
+    {id:"marca", n:"Con tu logo y colores", d:"La app se ve como tuya o de tu cliente.", m:0.5},
+  ]},
+  {t:"Usuarios y acceso", items:[
+    {id:"login", n:"Inicio de sesión", d:"Cada usuario entra con su correo y contraseña.", m:2},
+    {id:"roles", n:"Roles y permisos", d:"Admin, supervisor y trabajador ven cosas distintas.", m:2.5},
+    {id:"sedes", n:"Varias empresas o sedes", d:"Cada sede o cliente ve solo su información.", m:4.5},
+    {id:"masiva", n:"Carga masiva de usuarios", d:"Subir la lista de trabajadores desde Excel.", m:2},
+  ]},
+  {t:"Captura de datos", items:[
+    {id:"form", n:"Formularios o checklists", d:"Cada formato de hasta 20 campos. Ej: inspección, ATS, permiso de trabajo, entrega de EPP, ficha de EMO.", m:1.5, qty:true},
+    {id:"fotos", n:"Fotos y evidencias", d:"Adjuntar fotos desde el celular o la PC.", m:1.5},
+    {id:"archivos", n:"Subida de archivos", d:"Adjuntar PDFs, informes o documentos escaneados.", m:1.5},
+    {id:"firma", n:"Firma en pantalla", d:"Firma con el dedo del responsable o trabajador.", m:1},
+    {id:"geo", n:"Ubicación GPS", d:"Guarda dónde se hizo el registro.", m:0.5},
+    {id:"qr", n:"Códigos QR", d:"QR en equipos o áreas para abrir su ficha o registro.", m:1},
+  ]},
+  {t:"Reglas y cálculos", items:[
+    {id:"calculos", n:"Cálculos automáticos", d:"La app calcula sola con tus fórmulas. Ej: nivel de riesgo, puntajes, índices de accidentabilidad.", m:4},
+  ]},
+  {t:"Contenido y evaluaciones", items:[
+    {id:"cursos", n:"Contenido multimedia con seguimiento", d:"Videos, PDFs o presentaciones, y registro de quién los vio y cuánto avanzó. Ej: cursos, charlas de 5 minutos, procedimientos.", m:6},
+    {id:"eval", n:"Cuestionarios con nota automática", d:"Preguntas que se califican solas. Ej: examen de capacitación, test de inducción, evaluación de conocimientos.", m:4.5},
+    {id:"cert", n:"Constancias o certificados con QR", d:"La app genera el documento con los datos de la persona y un QR para verificarlo. Ej: certificados, constancias, autorizaciones.", m:3.5},
+  ]},
+  {t:"Alertas y recordatorios", items:[
+    {id:"alertas", n:"Alertas inmediatas por correo", d:"Llega un correo al momento en que alguien hace algo. Ej: se reporta un incidente y el jefe SST recibe el aviso al instante.", m:2.5},
+    {id:"recordatorios", n:"Recordatorios programados por correo", d:"Llega un correo en una fecha definida, sin que nadie haga nada. Ej: 30 días antes de que venza un EMO o una capacitación.", m:1.5},
+  ]},
+  {t:"Reportes", items:[
+    {id:"pdf", n:"Reporte en PDF", d:"El registro sale en tu formato, listo para enviar.", m:2},
+    {id:"excel", n:"Exportar a Excel", d:"Descargar los registros en una hoja.", m:1},
+    {id:"dash", n:"Dashboard con indicadores", d:"Gráficos y KPIs: accidentabilidad, cumplimiento, etc.", m:5.5},
+  ]},
+  {t:"Inteligencia artificial", items:[
+    {id:"ia_chat", n:"Asistente con IA", d:"Sugiere medidas de control, redacta o analiza lo registrado.", m:4.5},
+    {id:"ia_doc", n:"IA que lee fotos o documentos", d:"Extrae datos de fotos, PDFs o formatos escaneados.", m:4.5},
+  ]},
+];
+const ICONOS = {
+  base:'<rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 9h20"/><circle class="f" cx="5.5" cy="6.5" r=".9"/><circle class="f" cx="8.5" cy="6.5" r=".9"/>',
+  pwa:'<rect x="6" y="2" width="12" height="20" rx="2"/><path d="M12 7v7M9 11l3 3 3-3M10 18h4"/>',
+  marca:'<path d="M12 3a9 9 0 0 0 0 18c1.5 0 2-1 2-2s-1-1.5-1-2.5 1-1.5 2-1.5h2a4 4 0 0 0 4-4c0-4.4-4-8-9-8z"/><circle class="f" cx="7.5" cy="11" r="1.3"/><circle class="f" cx="10" cy="7" r="1.3"/><circle class="f" cx="15" cy="7" r="1.3"/>',
+  login:'<rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/><path d="M12 15v2"/>',
+  roles:'<path d="M12 3l7 3v5c0 5-3.5 8-7 10-3.5-2-7-5-7-10V6z"/><circle cx="12" cy="10" r="2"/><path d="M8.8 15.5c.9-1.4 1.9-2 3.2-2s2.3.6 3.2 2"/>',
+  sedes:'<path d="M4 21V5l8-3v19M12 8l8 3v10M3 21h18M7 8h2M7 12h2M7 16h2M15 14h2M15 17h2"/>',
+  masiva:'<circle cx="9" cy="8" r="3"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6"/><path d="M18 15V6M15 9l3-3 3 3"/>',
+  form:'<rect x="5" y="4" width="14" height="18" rx="2"/><path d="M9 4V2h6v2"/><path d="M9 13l2 2 4-4"/>',
+  fotos:'<path d="M3 8h4l2-3h6l2 3h4v12H3z"/><circle cx="12" cy="13" r="3.5"/>',
+  archivos:'<path d="M21 12.5l-8.4 8.4a5 5 0 0 1-7.1-7.1l8.8-8.8a3.3 3.3 0 0 1 4.7 4.7l-8.8 8.8a1.7 1.7 0 0 1-2.4-2.4l8-8"/>',
+  firma:'<path d="M3 20c3 0 4-3 6-3s2 2 4 2 3-2 5-2"/><path d="M14 4l4 4-8 8H6v-4z"/>',
+  geo:'<path d="M12 22s7-6.5 7-12a7 7 0 0 0-14 0c0 5.5 7 12 7 12z"/><circle cx="12" cy="10" r="2.5"/>',
+  offline:'<path d="M7 18h10a4 4 0 0 0 .5-8 6 6 0 0 0-11.3-1.5A4.5 4.5 0 0 0 7 18z"/><path d="M3 3l18 18"/>',
+  qr:'<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect class="f" x="14" y="14" width="3" height="3"/><rect class="f" x="18" y="18" width="3" height="3"/><path d="M18 15h3M14 21h1"/>',
+  cursos:'<rect x="2" y="4" width="20" height="14" rx="2"/><path class="f" d="M10 8.5v5l4.5-2.5z"/><path d="M8 21h8"/>',
+  eval:'<path d="M10 6h10M10 12h10M10 18h10"/><path d="M3 6l1.5 1.5L7 5M3 12l1.5 1.5L7 11M3 18l1.5 1.5L7 17"/>',
+  cert:'<circle cx="12" cy="9" r="6"/><path d="M8.5 14L7 22l5-3 5 3-1.5-8"/>',
+  calculos:'<rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8v4H8zM8 14h.01M12 14h.01M16 14h.01M8 18h.01M12 18h.01M16 18h.01"/>',
+  recordatorios:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M12 13v3l2 1"/>',
+  alertas:'<path d="M6 16v-5a6 6 0 0 1 12 0v5l2 2H4z"/><path d="M10 21h4"/>',
+  pdf:'<path d="M6 2h9l5 5v15H6z"/><path d="M14 2v6h6"/><path d="M9 14h6M9 18h4"/>',
+  excel:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M3 15h18M9 4v16"/>',
+  dash:'<path d="M3 21h18"/><rect x="5" y="11" width="3" height="7"/><rect x="10.5" y="5" width="3" height="13"/><rect x="16" y="8" width="3" height="10"/>',
+  ia_chat:'<path d="M4 5h16v11H9l-5 4z"/><path class="f" d="M12 6.8l1 2.2 2.2 1-2.2 1-1 2.2-1-2.2-2.2-1 2.2-1z"/>',
+  ia_doc:'<path d="M3 8V4h4M21 8V4h-4M3 16v4h4M21 16v4h-4"/><path d="M7 12h10"/><path d="M8 8.5h8M8 15.5h5"/>',
+};
+const PRESETS = {
+  inspecciones:{marca:1, login:1, form:2, fotos:1, firma:1, pdf:1, excel:1},
+  incidentes:{marca:1, login:1, roles:1, form:1, fotos:1, geo:1, alertas:1, pdf:1, dash:1},
+  capacitaciones:{marca:1, login:1, roles:1, sedes:1, masiva:1, cursos:1, eval:1, cert:1, alertas:1, pdf:1, excel:1, dash:1},
+  emos:{marca:1, login:1, roles:1, firma:1, archivos:1, ia_doc:1, alertas:1, recordatorios:1, pdf:1, excel:1, dash:1},
+  iperc:{marca:1, login:1, roles:1, calculos:1, ia_chat:1, pdf:1, excel:1, dash:1},
+  cero:{},
+};
+// ====================================================
+
+const sel = {};
+const ALL = GRUPOS.flatMap(g=>g.items);
+const fmtM = x => (Math.round(x*10)/10).toLocaleString("es-PE",{minimumFractionDigits:1,maximumFractionDigits:1});
+const fmtS = x => "S/ " + (Math.round(x/10)*10).toLocaleString("es-PE");
+const fmtD = x => "US$ " + Math.round(x).toLocaleString("es-PE");
+const pen = m => m*TARIFA_USD*TIPO_CAMBIO;
+
+function render(){
+  const root = document.getElementById("groups");
+  GRUPOS.forEach((g,gi)=>{
+    const sec = document.createElement("section"); sec.className="group"; sec.id="g-"+gi;
+    sec.innerHTML = `<div class="group-h"><h3>${g.t}</h3><span class="count" id="c-${gi}"></span></div>`;
+    g.items.forEach(it=>{
+      const row = document.createElement("label");
+      row.className = "item" + (it.fixed?" fixed":"");
+      row.dataset.id = it.id;
+      row.innerHTML = `
+        <span class="ico" aria-hidden="true"><svg viewBox="0 0 24 24">${ICONOS[it.id]||""}</svg></span>
+        <div>
+          <div class="name">${it.n}</div>
+          <div class="desc">${it.d}</div>
+          <span class="tk">+${fmtM(it.m)} M${it.qty?" c/u":""}</span>
+          ${it.fixed?`<div class="base-note">Siempre incluida</div>`:""}
+          ${it.qty?`<div><div class="stepper" data-q="${it.id}"><button type="button" data-d="-1" aria-label="Menos formatos">−</button><output id="q-${it.id}">0</output><button type="button" data-d="1" aria-label="Más formatos">+</button></div></div>`:""}
+        </div>
+        <input type="checkbox" id="f-${it.id}" ${it.fixed?"checked disabled":""} aria-label="${it.n}">
+        <span class="switch" aria-hidden="true"></span>`;
+      sec.appendChild(row);
+    });
+    root.appendChild(sec);
+  });
+  const idea = document.createElement("section"); idea.className="group";
+  idea.innerHTML = `<div class="group-h"><h3>Tu idea</h3><span class="count">opcional</span></div>
+    <div class="idea"><label for="idea">Cuéntala en 2 o 3 líneas</label>
+    <textarea id="idea" placeholder="Ej: app para que los supervisores hagan la inspección de extintores con foto y firma, y me llegue el PDF."></textarea></div>`;
+  root.appendChild(idea);
+  document.getElementById("segs").innerHTML = "<i></i>".repeat(24);
+
+  root.addEventListener("change", e=>{
+    if(e.target.type!=="checkbox") return;
+    const id = e.target.id.slice(2);
+    const it = ALL.find(i=>i.id===id);
+    if(e.target.checked) sel[id] = it.qty ? Math.max(sel[id]||0,1) : 1; else delete sel[id];
+    if(id==="offline" && sel.offline) sel.pwa = 1;     // sin internet necesita PWA
+    if(id==="pwa" && !sel.pwa) delete sel.offline;
+    clearPreset(); update();
+  });
+  root.addEventListener("click", e=>{
+    const b = e.target.closest(".stepper button"); if(!b) return;
+    e.preventDefault();
+    const id = b.closest(".stepper").dataset.q;
+    const v = Math.max(0, Math.min(15,(sel[id]||0) + Number(b.dataset.d)));
+    if(v) sel[id]=v; else delete sel[id];
+    clearPreset(); update();
+  });
+}
+
+function totals(){
+  let base = 0; const lines = [];
+  ALL.forEach(it=>{
+    const q = it.fixed ? 1 : (sel[it.id]||0);
+    if(!q) return;
+    const m = it.m*q; base += m;
+    lines.push([it.n + (it.qty?` (${q})`:""), m]);
+  });
+  return {base, est: base*(1+AJUSTE), hi: base*(1+RANGO_MAX), lines};
+}
+
+function update(){
+  ALL.forEach(it=>{
+    const row = document.querySelector(`.item[data-id="${it.id}"]`);
+    const q = it.fixed ? 1 : (sel[it.id]||0);
+    row.classList.toggle("on", q>0);
+    if(!it.fixed) row.querySelector("input").checked = q>0;
+    if(it.qty) document.getElementById("q-"+it.id).textContent = q;
+  });
+  GRUPOS.forEach((g,gi)=>{
+    const n = g.items.filter(it=>it.fixed || sel[it.id]).length;
+    const c = document.getElementById("c-"+gi);
+    c.textContent = `${n}/${g.items.length}`; c.classList.toggle("has", n>0);
+  });
+  const t = totals();
+  document.getElementById("pen").textContent = fmtS(pen(t.est));
+  document.getElementById("range").textContent = `Rango ${fmtS(pen(t.base))} a ${fmtS(pen(t.hi))}`;
+  document.getElementById("tok").textContent = fmtM(t.est) + " M";
+  document.getElementById("usd").textContent = fmtD(t.est*TARIFA_USD);
+  document.getElementById("mpen").textContent = fmtS(pen(t.est));
+  document.getElementById("mtok").textContent = fmtM(t.est) + " M tokens";
+  const filled = Math.min(24, Math.round(t.est/ESCALA_MAX*24));
+  document.querySelectorAll("#segs i").forEach((s,i)=>s.classList.toggle("f", i<filled));
+  const band = t.est < BANDAS[0] ? 0 : t.est < BANDAS[1] ? 1 : 2;
+  document.querySelectorAll("#bands span").forEach((s,i)=>s.classList.toggle("cur", i===band));
+  document.getElementById("lines").innerHTML =
+    t.lines.map(l=>`<li><span>${l[0]}</span><span>${fmtM(l[1])} M</span></li>`).join("") +
+    `<li class="adj"><span>Ajustes y pruebas (${Math.round(AJUSTE*100)}%)</span><span>${fmtM(t.base*AJUSTE)} M</span></li>`;
+  document.getElementById("rate").textContent =
+    (syncWa(), "") + `Tarifa: US$ ${TARIFA_USD} (aprox. S/ ${Math.round(TARIFA_USD*TIPO_CAMBIO)}) por millón de tokens, tipo de cambio ${TIPO_CAMBIO}. Es un estimado referencial: el precio final se confirma al revisar tu idea.`;
+}
+
+function applyPreset(k){
+  Object.keys(sel).forEach(id=>delete sel[id]);
+  Object.assign(sel, PRESETS[k]);
+  document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed", c.dataset.preset===k));
+  update();
+}
+function clearPreset(){ document.querySelectorAll(".chip").forEach(c=>c.setAttribute("aria-pressed","false")); }
+document.querySelectorAll(".chip").forEach(c=>c.addEventListener("click",()=>applyPreset(c.dataset.preset)));
+document.querySelectorAll(".mod").forEach(m=>m.addEventListener("click",()=>{
+  applyPreset(m.dataset.preset); document.getElementById("estimador").scrollIntoView();
+}));
+function precioPreset(k){
+  let base=0; ALL.forEach(it=>{ const q = it.fixed?1:(PRESETS[k][it.id]||0); base += it.m*q; });
+  return base*(1+AJUSTE);
+}
+document.querySelectorAll(".mp[data-p]").forEach(e=>{ e.textContent = "aprox. " + fmtS(pen(precioPreset(e.dataset.p))); });
+
+const WHATSAPP = "51962342328";
+function resumen(){
+  const t = totals();
+  const idea = (document.getElementById("idea")||{value:""}).value.trim();
+  return [
+    "Hola, quiero cotizar una app de SST.",
+    idea ? `Idea: ${idea}` : null,
+    "",
+    "Lo que necesito:",
+    ...t.lines.map(l=>`- ${l[0]}`),
+    "",
+    `Estimado de la calculadora: ${fmtM(t.est)} M tokens, ${fmtS(pen(t.est))} (rango ${fmtS(pen(t.base))} a ${fmtS(pen(t.hi))}).`
+  ].filter(x=>x!==null).join("\n");
+}
+function syncWa(){ document.getElementById("wa").href = `https://wa.me/${WHATSAPP}?text=${encodeURIComponent(resumen())}`; }
+document.getElementById("copy").addEventListener("click", ()=>{
+  const txt = resumen();
+  const msg = document.getElementById("copied");
+  const done = ()=>{ msg.textContent="Resumen copiado."; setTimeout(()=>msg.textContent="",3000); };
+  const fallback = ()=>{ const ta=document.createElement("textarea"); ta.value=txt; document.body.appendChild(ta); ta.select(); try{document.execCommand("copy"); done();}catch(e){msg.textContent="No se pudo copiar. Selecciona el texto manualmente.";} ta.remove(); };
+  try{ navigator.clipboard.writeText(txt).then(done, fallback); }catch(e){ fallback(); }
+});
+
+// Barra inferior en celular: solo visible dentro del estimador
+const mbar = document.getElementById("mbar");
+if("IntersectionObserver" in window){
+  new IntersectionObserver(es=>es.forEach(e=>mbar.classList.toggle("show", e.isIntersecting)),{rootMargin:"-30% 0px -30% 0px"})
+    .observe(document.getElementById("groups"));
+} else mbar.classList.add("show");
+
+render();
+document.getElementById("idea").addEventListener("input", syncWa);
+applyPreset("inspecciones");
+</script>
+</body>
+</html>
